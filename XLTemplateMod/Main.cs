@@ -1,9 +1,8 @@
 ﻿using HarmonyLib;
 using System.Reflection;
-using UnityEngine;
 using UnityModManagerNet;
 
-namespace XLPrecisionKeyframes
+namespace XLTemplateMod
 {
 #if DEBUG
     [EnableReloading]
@@ -13,17 +12,10 @@ namespace XLPrecisionKeyframes
         public static bool Enabled;
         private static Harmony Harmony;
 
-        public static GameObject UserInterfaceGameObject;
-
         static bool Load(UnityModManager.ModEntry modEntry)
         {
             Settings.Instance = UnityModManager.ModSettings.Load<Settings>(modEntry);
             Settings.ModEntry = modEntry;
-
-            UserInterfaceGameObject = new GameObject();
-            UserInterfaceGameObject.SetActive(false);
-            UserInterfaceGameObject.AddComponent<UserInterface.UserInterface>();
-            Object.DontDestroyOnLoad(UserInterfaceGameObject);
 
             modEntry.OnToggle = OnToggle;
 #if DEBUG
@@ -45,7 +37,6 @@ namespace XLPrecisionKeyframes
             }
             else
             {
-                Object.DestroyImmediate(UserInterfaceGameObject);
                 Harmony.UnpatchAll(Harmony.Id);
             }
 
@@ -55,8 +46,6 @@ namespace XLPrecisionKeyframes
 #if DEBUG
         static bool Unload(UnityModManager.ModEntry modEntry)
         {
-            Object.DestroyImmediate(UserInterfaceGameObject);
-
             Harmony?.UnpatchAll();
             return true;
         }

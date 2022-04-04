@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityModManagerNet;
 
-namespace XLPrecisionKeyframes
+namespace XLTemplateMod
 {
     [Serializable]
     public class Settings : UnityModManager.ModSettings
