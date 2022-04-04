@@ -1,0 +1,12 @@
+{
+  "Id": "XLPrecisionKeyframes",
+  "DisplayName": "XL Precision Keyframes",
+  "Author": "mcbtay",
+  "Version": "1.0.1",
+  "ManagerVersion": "0.22.5.0",
+  "Requirements": [],
+  "AssemblyName": "XLPrecisionKeyframes.dll",
+  "EntryMethod": "XLPrecisionKeyframes.Main.Load",
+  "HomePage": "https://github.com/MCBTay/XLPrecisionKeyframes",
+  "Repository": ""
+}
