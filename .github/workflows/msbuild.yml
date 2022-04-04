@@ -1,0 +1,102 @@
+name: Build, Test, and Analyze
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  # Path to the solution file relative to the root of the project.
+  SOLUTION_FILE_PATH: .
+
+  # Configuration type to build.
+  # You can convert this to a build matrix if you need coverage of multiple configuration types.
+  # https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+  BUILD_CONFIGURATION: Release
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+        
+    - name: Setup .NET Core SDK
+      uses: actions/setup-dotnet@v1.8.2
+      with:
+        dotnet-version: 5.0.x
+        
+    - name: Add MSBuild to PATH
+      uses: microsoft/setup-msbuild@v1
+      
+    - name: Set up JDK 11
+      uses: actions/setup-java@v1
+      with:
+        java-version: 1.11
+        
+    - name: Cache SonarCloud packages
+      uses: actions/cache@v1
+      with:
+        path: ~\sonar\cache
+        key: ${{ runner.os }}-sonar
+        restore-keys: ${{ runner.os }}-sonar
+        
+    - name: Cache SonarCloud scanner
+      id: cache-sonar-scanner
+      uses: actions/cache@v1
+      with:
+        path: .\.sonar\scanner
+        key: ${{ runner.os }}-sonar-scanner
+        restore-keys: ${{ runner.os }}-sonar-scanner
+        
+    - name: Install SonarCloud scanner
+      if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
+      shell: powershell
+      run: |
+        New-Item -Path .\.sonar\scanner -ItemType Directory
+        dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
+
+    - name: Restore NuGet packages
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      run: nuget restore ${{env.SOLUTION_FILE_PATH}}
+      
+    #- name: Start SonarCloud Analysis
+    #  env:
+    #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+    #    SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    #  run: .\.sonar\scanner\dotnet-sonarscanner begin /k:"MCBTay_XLTemplateMod" /o:"mcbtay" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.vstest.reportsPaths="**/*.trx" /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml"
+        
+    - name: MSBuild
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      shell: powershell
+      run: |
+        msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}}
+        
+    #- name: Stop SonarScanner Analysis
+    #  env:
+    #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+    #    SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    #  run: .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+
+    - name: Prepare Files for Zip
+      run: |
+        New-Item -Path "XLTemplateMod\bin\Release\" -name "XLTemplateMod" -ItemType "directory"
+        Copy-Item "XLTemplateMod\bin\Release\XLTemplateMod.dll" -Destination "XLTemplateMod\bin\Release\XLTemplateMod/XLTemplateMod.dll"
+        Copy-Item "XLTemplateMod\bin\Release\Info.json" "XLTemplateMod\bin\Release\XLTemplateMod\Info.json"
+
+    - name: Create ZIP
+      id: filename
+      shell: pwsh
+      run: |
+        $archiveName = "XLTemplateMod.zip"
+        Compress-Archive -Path XLTemplateMod/bin/Release/XLTemplateMod -DestinationPath ${archiveName} -CompressionLevel Optimal
+        echo "ARCHIVE_NAME=${archiveName}" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+
+    - name: Upload XLTemplateMod installable zip
+      uses: actions/upload-artifact@v2.2.2
+      with:
+        name: XLMenuMod
+        path: ${{env.GITHUB_WORKSPACE}}XLTemplateMod/bin/Release/*.zip 
