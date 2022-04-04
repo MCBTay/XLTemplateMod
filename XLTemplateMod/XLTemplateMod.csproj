@@ -75,4 +75,15 @@
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>SET SkaterXLPath=%25SXL_PATH%25
+SET DeployPath=%25SkaterXLPath%25\Mods\$(ProjectName)
+
+if "$(ConfigurationName)" == "Debug" ( 
+    del /Q /F "%25DeployPath%25"
+    copy /Y "$(TargetDir)XLTemplateMod.dll" "%25DeployPath%25\XLTemplateMod.dll"
+    copy /Y "$(TargetDir)XLTemplateMod.pdb" "%25DeployPath%25\XLTemplateMod.pdb"
+    copy /Y "$(TargetDir)Info.json" "%25DeployPath%25\Info.json"
+)</PostBuildEvent>
+  </PropertyGroup>
 </Project>
