@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityModManagerNet;
 
-namespace XLTemplateMod
+namespace {{ cookiecutter.project_name }}
 {
     [Serializable]
     public class Settings : UnityModManager.ModSettings

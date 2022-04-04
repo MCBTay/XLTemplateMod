@@ -2,7 +2,7 @@
 using System.Reflection;
 using UnityModManagerNet;
 
-namespace XLTemplateMod
+namespace {{ cookiecutter.project_name }}
 {
 #if DEBUG
     [EnableReloading]
