@@ -3,7 +3,6 @@ name: Deploy to mod.io
 on:
   release:
     types: [published]
-  workflow_dispatch:
         
 env:
   SOLUTION_FILE_PATH: .

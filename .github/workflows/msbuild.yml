@@ -3,6 +3,8 @@ name: Build, Test, and Analyze
 on:
   push:
     branches: [ main ]
+    paths-ignore:
+      - '**/cookiecutter.json'
   pull_request:
     branches: [ main ]
 
