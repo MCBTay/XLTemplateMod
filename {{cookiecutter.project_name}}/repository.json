@@ -1,0 +1,9 @@
+{
+    "Releases": [
+      {
+        "Id": "{{cookiecutter.project_name}}",
+        "Version": "{{cookiecutter.version}}",
+        "DownloadUrl": "https://github.com/{{cookiecutter.author}}/{{cookiecutter.project_name}}/releases/download/1.0.0/{{cookiecutter.project_name}}-1-0-0.zip"
+      }
+    ]
+}
