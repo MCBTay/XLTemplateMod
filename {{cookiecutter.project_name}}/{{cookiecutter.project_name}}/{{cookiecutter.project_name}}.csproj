@@ -80,6 +80,8 @@
 SET DeployPath=%25SkaterXLPath%25\Mods\$(ProjectName)
 
 if "$(ConfigurationName)" == "Debug" ( 
+    if not exist "%25DeployPath%25" mkdir "%25DeployPath%25"
+
     del /Q /F "%25DeployPath%25"
     copy /Y "$(TargetDir){{cookiecutter.project_name}}.dll" "%25DeployPath%25\{{cookiecutter.project_name}}.dll"
     copy /Y "$(TargetDir){{cookiecutter.project_name}}.pdb" "%25DeployPath%25\{{cookiecutter.project_name}}.pdb"
