@@ -69,7 +69,7 @@ jobs:
     #  env:
     #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
     #    SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-    #  run: .\.sonar\scanner\dotnet-sonarscanner begin /k:"MCBTay_XLTemplateMod" /o:"mcbtay" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.vstest.reportsPaths="**/*.trx" /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml"
+    #  run: .\.sonar\scanner\dotnet-sonarscanner begin /k:"{{cookiecutter.author}}_{{cookiecutter.project_name}}" /o:"{{cookiecutter.project_name}}" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.vstest.reportsPaths="**/*.trx" /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml"
         
     - name: MSBuild
       working-directory: ${{env.GITHUB_WORKSPACE}}
@@ -85,20 +85,20 @@ jobs:
 
     - name: Prepare Files for Zip
       run: |
-        New-Item -Path "XLTemplateMod\bin\Release\" -name "XLTemplateMod" -ItemType "directory"
-        Copy-Item "XLTemplateMod\bin\Release\XLTemplateMod.dll" -Destination "XLTemplateMod\bin\Release\XLTemplateMod/XLTemplateMod.dll"
-        Copy-Item "XLTemplateMod\bin\Release\Info.json" "XLTemplateMod\bin\Release\XLTemplateMod\Info.json"
+        New-Item -Path "{{cookiecutter.project_name}}\bin\Release\" -name "{{cookiecutter.project_name}}" -ItemType "directory"
+        Copy-Item "{{cookiecutter.project_name}}\bin\Release\{{cookiecutter.project_name}}.dll" -Destination "{{cookiecutter.project_name}}\bin\Release\{{cookiecutter.project_name}}\{{cookiecutter.project_name}}.dll"
+        Copy-Item "{{cookiecutter.project_name}}\bin\Release\Info.json" "{{cookiecutter.project_name}}\bin\Release\{{cookiecutter.project_name}}\Info.json"
 
     - name: Create ZIP
       id: filename
       shell: pwsh
       run: |
-        $archiveName = "XLTemplateMod.zip"
-        Compress-Archive -Path XLTemplateMod/bin/Release/XLTemplateMod -DestinationPath ${archiveName} -CompressionLevel Optimal
+        $archiveName = "{{cookiecutter.project_name}}.zip"
+        Compress-Archive -Path {{cookiecutter.project_name}}/bin/Release/{{cookiecutter.project_name}} -DestinationPath ${archiveName} -CompressionLevel Optimal
         echo "ARCHIVE_NAME=${archiveName}" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
 
-    - name: Upload XLTemplateMod installable zip
+    - name: Upload {{cookiecutter.project_name}} installable zip
       uses: actions/upload-artifact@v2.2.2
       with:
-        name: XLMenuMod
-        path: ${{env.GITHUB_WORKSPACE}}XLTemplateMod/bin/Release/*.zip 
+        name: {{cookiecutter.project_name}}
+        path: ${{env.GITHUB_WORKSPACE}}{{cookiecutter.project_name}}/bin/Release/*.zip 
