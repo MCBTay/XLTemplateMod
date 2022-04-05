@@ -1,9 +1,9 @@
 {
     "Releases": [
-        {
-            "Id": "XLTemplateMod",
-            "Version": "1.0.0",
-            "DownloadUrl": "https://github.com/MCBTay/XLTemplateMod/releases/download/1.0.0/XLTemplateMod-1-0-0.zip"
-        }
+      {
+        "Id": "{{cookiecutter.project_name}}",
+        "Version": "{{cookiecutter.version}}",
+        "DownloadUrl": "https://github.com/{{cookiecutter.author}}/{{cookiecutter.project_name}}/releases/download/1.0.0/{{cookiecutter.project_name}}-1-0-0.zip"
+      }
     ]
 }

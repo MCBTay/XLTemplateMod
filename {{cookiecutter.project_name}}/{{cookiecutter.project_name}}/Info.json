@@ -7,6 +7,6 @@
   "Requirements": [],
   "AssemblyName": "{{cookiecutter.project_name}}.dll",
   "EntryMethod": "{{cookiecutter.project_name}}.Main.Load",
-  "HomePage": "https://github.com/MCBTay/{{cookiecutter.project_name}}",
+  "HomePage": "https://github.com/{{cookiecutter.author}}/{{cookiecutter.project_name}}",
   "Repository": ""
 }
