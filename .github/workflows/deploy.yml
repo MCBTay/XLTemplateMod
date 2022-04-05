@@ -3,7 +3,6 @@ name: Deploy to mod.io
 on:
   release:
     types: [published]
-  workflow_dispatch:
         
 env:
   SOLUTION_FILE_PATH: .
@@ -29,7 +28,7 @@ jobs:
     - name: Update Info.json
       uses: jossef/action-set-json-field@v1
       with:
-        file: ./XLTemplateMod/Info.json
+        file: ./{{cookiecutter.project_name}}/Info.json
         field: Version
         value: ${{ github.event.release.tag_name }}
         
@@ -38,7 +37,7 @@ jobs:
         git config user.name "GitHub Actions"
         git config user.email "<>"
         git switch -c main
-        git commit -m "Bumping version number in Info.json" ./XLTemplateMod/Info.json
+        git commit -m "Bumping version number in Info.json" ./{{cookiecutter.project_name}}/Info.json
         git push --set-upstream origin main
         git tag --force ${{ github.event.release.tag_name }}
         git push origin ${{ github.event.release.tag_name }} --force
@@ -58,20 +57,20 @@ jobs:
         
     - name: Prepare Files for Zip
       run: |
-        New-Item -Path "XLTemplateMod\bin\Release\" -name "XLTemplateMod" -ItemType "directory"
-        Copy-Item "XLTemplateMod\bin\Release\XLTemplateMod.dll" -Destination "XLTemplateMod\bin\Release\XLTemplateMod/XLTemplateMod.dll"
-        Copy-Item "XLTemplateMod\bin\Release\Info.json" "XLTemplateMod\bin\Release\XLTemplateMod\Info.json"
+        New-Item -Path "{{cookiecutter.project_name}}\bin\Release\" -name "{{cookiecutter.project_name}}" -ItemType "directory"
+        Copy-Item "{{cookiecutter.project_name}}\bin\Release\{{cookiecutter.project_name}}.dll" -Destination "{{cookiecutter.project_name}}\bin\Release\{{cookiecutter.project_name}}\{{cookiecutter.project_name}}.dll"
+        Copy-Item "{{cookiecutter.project_name}}\bin\Release\Info.json" "{{cookiecutter.project_name}}\bin\Release\{{cookiecutter.project_name}}\Info.json"
         
     - name: Create ZIP
       id: filename
       shell: pwsh
       run: |
         $tag = "${{ github.event.release.tag_name }}".Replace('.', '-')
-        $archiveName = "XLTemplateMod-${tag}.zip"
-        Compress-Archive -Path XLTemplateMod/bin/Release/XLTemplateMod -DestinationPath ${archiveName} -CompressionLevel Optimal
+        $archiveName = "{{cookiecutter.project_name}}-${tag}.zip"
+        Compress-Archive -Path {{cookiecutter.project_name}}/bin/Release/{{cookiecutter.project_name}} -DestinationPath ${archiveName} -CompressionLevel Optimal
         echo "ARCHIVE_NAME=${archiveName}" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
         
-    - name: Upload XLTemplateMod.zip to release
+    - name: Upload {{cookiecutter.project_name}}.zip to release
       uses: svenstaro/upload-release-action@v2
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
@@ -93,7 +92,7 @@ jobs:
       with:
         file_path: ${{ steps.update-json.outputs.out_file }}
         field_path: Releases.0.DownloadUrl
-        field_value: "https://github.com/MCBTay/XLTemplateMod/releases/download/${{ github.event.release.tag_name }}/${{ env.ARCHIVE_NAME }}"
+        field_value: "https://github.com/${{ github.repository_owner }}/{{cookiecutter.project_name}}/releases/download/${{ github.event.release.tag_name }}/${{ env.ARCHIVE_NAME }}"
         
     - name: Overwrite repository.json
       run: |

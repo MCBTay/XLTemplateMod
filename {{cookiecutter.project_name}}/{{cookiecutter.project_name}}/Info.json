@@ -1,0 +1,12 @@
+{
+  "Id": "{{cookiecutter.project_name}}",
+  "DisplayName": "{{cookiecutter.project_name}}",
+  "Author": "{{cookiecutter.author}}",
+  "Version": "{{cookiecutter.version}}",
+  "ManagerVersion": "0.22.5.0",
+  "Requirements": [],
+  "AssemblyName": "{{cookiecutter.project_name}}.dll",
+  "EntryMethod": "{{cookiecutter.project_name}}.Main.Load",
+  "HomePage": "https://github.com/{{cookiecutter.author}}/{{cookiecutter.project_name}}",
+  "Repository": ""
+}
