@@ -1,7 +1,6 @@
 {
     "project_name": "choose_project_name",
     "author": "username",
-	"sxl_path": "C:\Users\yourusername\Steam\steamapps\common\Skater XL",
-	"version": "1.0.0",
-	"project_slug": "{{ cookiecutter.project_name.lower().replace(' ', '_').replace('-', '_') }}",
+	  "sxl_path": "C:\\Users\\yourusername\\Steam\\steamapps\\common\\Skater XL",
+	  "version": "1.0.0"
 }
