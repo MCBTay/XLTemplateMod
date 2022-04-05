@@ -43,16 +43,16 @@ jobs:
       uses: actions/cache@v1
       with:
         path: ~\sonar\cache
-        key: ${{ runner.os }}-sonar
-        restore-keys: ${{ runner.os }}-sonar
+        key: {% raw %}${{ runner.os }}-sonar{% endraw %}
+        restore-keys: {% raw %}${{ runner.os }}-sonar{% endraw %}
         
     - name: Cache SonarCloud scanner
       id: cache-sonar-scanner
       uses: actions/cache@v1
       with:
         path: .\.sonar\scanner
-        key: ${{ runner.os }}-sonar-scanner
-        restore-keys: ${{ runner.os }}-sonar-scanner
+        key: {% raw %}${{ runner.os }}-sonar-scanner{% endraw %}
+        restore-keys: {% raw %}${{ runner.os }}-sonar-scanner{% endraw %}
         
     - name: Install SonarCloud scanner
       if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
@@ -62,26 +62,26 @@ jobs:
         dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
 
     - name: Restore NuGet packages
-      working-directory: ${{env.GITHUB_WORKSPACE}}
-      run: nuget restore ${{env.SOLUTION_FILE_PATH}}
+      working-directory: {% raw %}${{env.GITHUB_WORKSPACE}}{% endraw %}
+      run: nuget restore {% raw %}${{env.SOLUTION_FILE_PATH}}{% endraw %}
       
     #- name: Start SonarCloud Analysis
     #  env:
-    #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-    #    SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-    #  run: .\.sonar\scanner\dotnet-sonarscanner begin /k:"${{ github.repository_owner }}_{{cookiecutter.project_name}}" /o:"{{cookiecutter.project_name}}" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.vstest.reportsPaths="**/*.trx" /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml"
+    #    GITHUB_TOKEN: {% raw %}${{ secrets.GITHUB_TOKEN }}{% endraw %}  # Needed to get PR information, if any
+    #    SONAR_TOKEN: {% raw %}${{ secrets.SONAR_TOKEN }}{% endraw %}
+    #  run: .\.sonar\scanner\dotnet-sonarscanner begin /k:"{% raw %}${{ github.repository_owner }}{% endraw %}_{{cookiecutter.project_name}}" /o:"{{cookiecutter.project_name}}" /d:sonar.login="{% raw %}${{ secrets.SONAR_TOKEN }}{% endraw %}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.vstest.reportsPaths="**/*.trx" /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml"
         
     - name: MSBuild
-      working-directory: ${{env.GITHUB_WORKSPACE}}
+      working-directory: {% raw %}${{env.GITHUB_WORKSPACE}}{% endraw %}
       shell: powershell
       run: |
-        msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}}
+        msbuild /m /p:Configuration={% raw %}${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}}{% endraw %}
         
     #- name: Stop SonarScanner Analysis
     #  env:
-    #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-    #    SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-    #  run: .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+    #    GITHUB_TOKEN: {% raw %}${{ secrets.GITHUB_TOKEN }}{% endraw %}  # Needed to get PR information, if any
+    #    SONAR_TOKEN: {% raw %}${{ secrets.SONAR_TOKEN }}{% endraw %}
+    #  run: .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="{% raw %}${{ secrets.SONAR_TOKEN }}{% endraw %}"
 
     - name: Prepare Files for Zip
       run: |
@@ -101,4 +101,4 @@ jobs:
       uses: actions/upload-artifact@v2.2.2
       with:
         name: {{cookiecutter.project_name}}
-        path: ${{env.GITHUB_WORKSPACE}}{{cookiecutter.project_name}}/bin/Release/*.zip 
+        path: {% raw %}${{env.GITHUB_WORKSPACE}}{% endraw %}{{cookiecutter.project_name}}/bin/Release/*.zip 
