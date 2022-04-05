@@ -92,7 +92,7 @@ jobs:
       with:
         file_path: {% raw %}${{ steps.update-json.outputs.out_file }}{% endraw %}
         field_path: Releases.0.DownloadUrl
-        field_value: "https://github.com/{% raw %}${{ github.repository_owner }}{% endraw %}/{{cookiecutter.project_name}}/releases/download/{% raw %}${{ github.event.release.tag_name }}{% endraw %}/${{ env.ARCHIVE_NAME }}{% endraw %}"
+        field_value: "https://github.com/{% raw %}${{ github.repository_owner }}{% endraw %}/{{cookiecutter.project_name}}/releases/download/{% raw %}${{ github.event.release.tag_name }}{% endraw %}/{% raw %}${{ env.ARCHIVE_NAME }}{% endraw %}"
         
     - name: Overwrite repository.json
       run: |
