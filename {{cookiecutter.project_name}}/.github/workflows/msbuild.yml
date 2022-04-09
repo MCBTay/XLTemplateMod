@@ -89,16 +89,8 @@ jobs:
         Copy-Item "{{cookiecutter.project_name}}\bin\Release\{{cookiecutter.project_name}}.dll" -Destination "{{cookiecutter.project_name}}\bin\Release\{{cookiecutter.project_name}}\{{cookiecutter.project_name}}.dll"
         Copy-Item "{{cookiecutter.project_name}}\bin\Release\Info.json" "{{cookiecutter.project_name}}\bin\Release\{{cookiecutter.project_name}}\Info.json"
 
-    - name: Create ZIP
-      id: filename
-      shell: pwsh
-      run: |
-        $archiveName = "{{cookiecutter.project_name}}.zip"
-        Compress-Archive -Path {{cookiecutter.project_name}}/bin/Release/{{cookiecutter.project_name}} -DestinationPath ${archiveName} -CompressionLevel Optimal
-        echo "ARCHIVE_NAME=${archiveName}" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
-
-    - name: Upload {{cookiecutter.project_name}} installable zip
-      uses: actions/upload-artifact@v2.2.2
+    - name: Upload {{cookiecutter.project_name}} zip
+      uses: actions/upload-artifact@v3.0.0
       with:
         name: {{cookiecutter.project_name}}
-        path: {% raw %}${{env.GITHUB_WORKSPACE}}{% endraw %}{{cookiecutter.project_name}}/bin/Release/*.zip 
+        path: {{cookiecutter.project_name}}/bin/Release/{{cookiecutter.project_name}}/
