@@ -23,14 +23,14 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
       with:
-          ref: ${{ github.head_ref }}
+          ref: {% raw %}${{ github.head_ref }}{% endraw %}
       
     - name: Update Info.json
       uses: jossef/action-set-json-field@v1
       with:
         file: ./{{cookiecutter.project_name}}/Info.json
         field: Version
-        value: ${{ github.event.release.tag_name }}
+        value: {% raw %}${{ github.event.release.tag_name }}{% endraw %}
         
     - name: Commit Info.json
       run: |
@@ -39,20 +39,20 @@ jobs:
         git switch -c main
         git commit -m "Bumping version number in Info.json" ./{{cookiecutter.project_name}}/Info.json
         git push --set-upstream origin main
-        git tag --force ${{ github.event.release.tag_name }}
-        git push origin ${{ github.event.release.tag_name }} --force
+        git tag --force {% raw %}${{ github.event.release.tag_name }}{% endraw %}
+        git push origin {% raw %}${{ github.event.release.tag_name }}{% endraw %} --force
       
     - name: Restore NuGet packages
-      working-directory: ${{env.GITHUB_WORKSPACE}}
-      run: nuget restore ${{env.SOLUTION_FILE_PATH}}
+      working-directory: {% raw %}${{env.GITHUB_WORKSPACE}}{% endraw %}
+      run: nuget restore {% raw %}${{env.SOLUTION_FILE_PATH}}{% endraw %}
       
     - name: MSBuild
-      working-directory: ${{env.GITHUB_WORKSPACE}}
+      working-directory: {% raw %}${{env.GITHUB_WORKSPACE}}{% endraw %}
       shell: powershell
-      run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}}
+      run: msbuild /m /p:Configuration={% raw %}${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}}{% endraw %}
     
     - name: Test
-      working-directory: ${{env.GITHUB_WORKSPACE}}
+      working-directory: {% raw %}${{env.GITHUB_WORKSPACE}}{% endraw %}
       run: dotnet test --verbosity normal --settings coverlet.runsettings --logger:trx
         
     - name: Prepare Files for Zip
@@ -65,7 +65,7 @@ jobs:
       id: filename
       shell: pwsh
       run: |
-        $tag = "${{ github.event.release.tag_name }}".Replace('.', '-')
+        $tag = "{% raw %}${{ github.event.release.tag_name }}{% endraw %}".Replace('.', '-')
         $archiveName = "{{cookiecutter.project_name}}-${tag}.zip"
         Compress-Archive -Path {{cookiecutter.project_name}}/bin/Release/{{cookiecutter.project_name}} -DestinationPath ${archiveName} -CompressionLevel Optimal
         echo "ARCHIVE_NAME=${archiveName}" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
@@ -73,10 +73,10 @@ jobs:
     - name: Upload {{cookiecutter.project_name}}.zip to release
       uses: svenstaro/upload-release-action@v2
       with:
-        repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: ${{ env.ARCHIVE_NAME }}
-        asset_name: ${{ env.ARCHIVE_NAME }}
-        tag: ${{ github.event.release.tag_name }}
+        repo_token: {% raw %}${{ secrets.GITHUB_TOKEN }}{% endraw %}
+        file: {% raw %}${{ env.ARCHIVE_NAME }}{% endraw %}
+        asset_name: {% raw %}${{ env.ARCHIVE_NAME }}{% endraw %}
+        tag: {% raw %}${{ github.event.release.tag_name }}{% endraw %}
         
     - name: Update repository.json Version
       id: update-json
@@ -84,19 +84,19 @@ jobs:
       with:
         file_path: ./repository.json
         field_path: Releases.0.Version
-        field_value: ${{ github.event.release.tag_name }}
+        field_value: {% raw %}${{ github.event.release.tag_name }}{% endraw %}
         
     - name: Update repository.json DownloadUrl
       id: update-json2
       uses: 898anil/github-actions-json-edit@v0.2
       with:
-        file_path: ${{ steps.update-json.outputs.out_file }}
+        file_path: {% raw %}${{ steps.update-json.outputs.out_file }}{% endraw %}
         field_path: Releases.0.DownloadUrl
-        field_value: "https://github.com/${{ github.repository_owner }}/{{cookiecutter.project_name}}/releases/download/${{ github.event.release.tag_name }}/${{ env.ARCHIVE_NAME }}"
+        field_value: "https://github.com/{% raw %}${{ github.repository_owner }}{% endraw %}/{{cookiecutter.project_name}}/releases/download/{% raw %}${{ github.event.release.tag_name }}{% endraw %}/{% raw %}${{ env.ARCHIVE_NAME }}{% endraw %}"
         
     - name: Overwrite repository.json
       run: |
-        Copy-Item "${{ steps.update-json2.outputs.out_file }}" "repository.json"
+        Copy-Item "{% raw %}${{ steps.update-json2.outputs.out_file }}{% endraw %}" "repository.json"
     
     - name: Commit repository.json
       run: |
@@ -105,9 +105,9 @@ jobs:
       
     #- uses: nickelc/upload-to-modio@v1.0.1
     #  with:
-    #    token: ${{ secrets.MODIO_TOKEN }}
+    #    token: {% raw %}${{ secrets.MODIO_TOKEN }}{% endraw %}
     #    game: 629 # skaterxl
     #    mod: 0 # xltemplatemod (look up mod here)
-    #    path: ${{ env.ARCHIVE_NAME }}
-    #    version: ${{ github.event.release.tag_name }}
-    #    changelog: ${{ github.event.release.body }}
+    #    path: {% raw %}${{ env.ARCHIVE_NAME }}{% endraw %}
+    #    version: {% raw %}${{ github.event.release.tag_name }}{% endraw %}
+    #    changelog: {% raw %}${{ github.event.release.body }}{% endraw %}
